@@ -92,19 +92,50 @@ class Customer {
          last_name AS "lastName", 
          phone, 
          notes 
-        FROM customers WHERE first = $1 AND last = $2`,
+        FROM customers WHERE (first_name = $1 AND last_name = $2)`,
 			[ first, last ]
 		);
 
 		const customer = results.rows[0];
 
 		if (customer === undefined) {
-			const err = new Error(`No such customer: ${id}`);
+			const err = new Error(`No such customer: ${first} ${last}`);
 			err.status = 404;
 			throw err;
 		}
 
 		return new Customer(customer);
+	}
+
+	// Find top 10 customers
+	static async findTop() {
+		const results = await db.query(
+			`SELECT c.id, c.first_name AS firstName, c.last_name AS lastName, c.phone, c.notes,
+            COUNT (c.first_name) AS ct
+            FROM reservations r
+            JOIN customers c
+            ON r.customer_id = c.id
+            GROUP BY r.customer_id, c.id, c.first_name, c.last_name, c.phone, c.notes
+            ORDER BY ct DESC
+            LIMIT 10;`
+		);
+
+		if (results.rows.length === 0) {
+			const err = new Error(`No customers found`);
+			err.status = 404;
+			throw err;
+		}
+
+		return results.rows.map(
+			(c) =>
+				new Customer({
+					id: c.id,
+					firstName: c.firstname,
+					lastName: c.lastname,
+					phone: c.phone,
+					notes: c.notes
+				})
+		);
 	}
 }
 
