@@ -15,10 +15,47 @@ class Reservation {
 		this.notes = notes;
 	}
 
+	// Set numGuests: Error if less than 1
+	set numGuests(val) {
+		if (val < 1) {
+			throw new Error(`Reservation must be for 1 or more people`, 400);
+		}
+		this._numGuests = val;
+	}
+
+	get numGuests() {
+		return this._numGuests;
+	}
+
+	// Set startAt: error if not a date or not a number
+	set startAt(val) {
+		if (val instanceof Date && !isNaN(val)) {
+			this._startAt = val;
+		} else {
+			throw new Error('startAt is not valid', 400);
+		}
+	}
+
+	get startAt() {
+		return this._startAt;
+	}
+
 	/** formatter for startAt */
 
 	getformattedStartAt() {
 		return moment(this.startAt).format('MMMM Do YYYY, h:mm a');
+	}
+
+	// Check to see if customer id is already set: If so throw error on try to change
+	set customerId(val) {
+		if (this._customerId && this._customerId !== val) {
+			throw new Error('Customer ID cannot be changed');
+		}
+		this._customerId = val;
+	}
+
+	get customerId() {
+		return this._customerId;
 	}
 
 	/** given a customer id, find their reservations. */
