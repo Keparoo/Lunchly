@@ -104,25 +104,25 @@ class Customer {
 
 	// Find customer by name
 	static async findCustomer(first, last) {
+		first = first.trim();
+		last = last.trim();
 		const results = await db.query(
 			`SELECT id, 
             first_name AS "firstName",  
             last_name AS "lastName", 
             phone, 
             notes 
-            FROM customers WHERE (first_name = $1 AND last_name = $2)`,
+            FROM customers WHERE (first_name = $1 OR last_name = $2)`,
 			[ first, last ]
 		);
 
-		const customer = results.rows[0];
-
-		if (customer === undefined) {
+		if (results.rows.length === 0) {
 			const err = new Error(`No such customer: ${first} ${last}`);
 			err.status = 404;
 			throw err;
 		}
 
-		return new Customer(customer);
+		return results.rows.map((c) => new Customer(c));
 	}
 
 	// Find top 10 customers

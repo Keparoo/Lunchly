@@ -52,10 +52,11 @@ router.get('/find/', async function(req, res, next) {
 		const first = req.query.first;
 		const last = req.query.last;
 
-		const customer = await Customer.findCustomer(first, last);
-		const reservations = await customer.getReservations();
+		const customers = await Customer.findCustomer(first, last);
+		// const reservations = await customer.getReservations();
 
-		return res.render('customer_detail.html', { customer, reservations });
+		return res.render('found_customers.html', { customers });
+		// return res.render('customer_detail.html', { customer, reservations });
 	} catch (err) {
 		return next(err);
 	}

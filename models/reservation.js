@@ -63,12 +63,12 @@ class Reservation {
 	static async getReservationsForCustomer(customerId) {
 		const results = await db.query(
 			`SELECT id, 
-           customer_id AS "customerId", 
-           num_guests AS "numGuests", 
-           start_at AS "startAt", 
-           notes AS "notes"
-         FROM reservations 
-         WHERE customer_id = $1`,
+            customer_id AS "customerId", 
+            num_guests AS "numGuests", 
+            start_at AS "startAt", 
+            notes AS "notes"
+            FROM reservations 
+            WHERE customer_id = $1`,
 			[ customerId ]
 		);
 
@@ -80,8 +80,8 @@ class Reservation {
 		if (this.id === undefined) {
 			const result = await db.query(
 				`INSERT INTO reservations (customer_id, num_guests, start_at, notes)
-         VALUES ($1, $2, $3, $4)
-         RETURNING id`,
+                VALUES ($1, $2, $3, $4)
+                RETURNING id`,
 				[ this.customerId, this.numGuests, this.startAt, this.notes ]
 			);
 			this.id = result.rows[0].id;
