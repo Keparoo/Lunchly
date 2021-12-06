@@ -87,8 +87,9 @@ class Reservation {
 			this.id = result.rows[0].id;
 		} else {
 			await db.query(
-				`UPDATE reservations SET num_guests=$1, startAt=$2, notes=$3
-     WHERE id=$4`,
+				`UPDATE reservations
+                SET num_guests=$1, startAt=$2, notes=$3
+                WHERE id=$4`,
 				[ this.numGuests, this.startAt, this.notes, this.id ]
 			);
 		}
